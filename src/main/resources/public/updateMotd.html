@@ -1,0 +1,65 @@
+<html>
+<head>
+    <title>Update Message of The Day</title>
+
+	<script>
+		function setResponse(value) {
+		  document.getElementById('motdResponse').innerHTML = value;
+		}
+	
+		window.addEventListener("load", function () {
+		  function initData() {
+		    var XHR = new XMLHttpRequest();
+		    XHR.open( 'GET', '/', false );
+		    XHR.send();
+		    return XHR.responseText;
+		  }
+
+		  function sendData() {
+		    var XHR = new XMLHttpRequest();
+		    var data = {};
+		    data.value = form.elements['motd'].value;
+
+		    // Setup error event
+		    XHR.addEventListener("error", function(event) {
+		      alert('Error.');
+		    });
+
+		    // Setup HTTP request
+		    XHR.open('PUT', '/motd', false);
+		    XHR.setRequestHeader('Content-Type', 'application/json');
+
+		    // The data sent is what the user provided in the form
+		    XHR.send(JSON.stringify(data));
+		    setResponse(XHR.responseText);
+		  }
+
+		  // Access form element...
+		  var form = document.getElementById("motdForm");
+		  var msg = initData();
+		  form.elements['motd'].size = msg.length + 1;
+		  form.elements['motd'].value = msg;
+
+		  // ...and create new submit event.
+		  form.addEventListener("submit", function (event) {
+		    event.preventDefault();
+
+		    sendData();
+		  });
+		});
+
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <form id="motdForm" method="POST" action="/motd">
+            <h2>Message of the day:</h2><br>
+            <input type="text" name="motd" onfocus="setResponse('');">
+            <input type="submit" value="Change Message"><br><br>
+            <label id="motdResponse"></label>
+        </form>
+    </div>
+</body>
+
+</html>
